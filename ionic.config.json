@@ -1,0 +1,8 @@
+{
+  "name": "Ion_cocktail_app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "8b900aee"
+}
