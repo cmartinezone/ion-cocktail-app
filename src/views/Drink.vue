@@ -2,20 +2,20 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title color="primary">Random Drink</ion-title>
+        <ion-buttons slot="start">
+          <ion-back-button default-href="/tabs/tab2"></ion-back-button>
+        </ion-buttons>
+        <ion-title color="primary">{{ state.drink.strDrink }}</ion-title>
       </ion-toolbar>
     </ion-header>
+
     <ion-content v-if="state.loading">
       <div class="loading-center">
         <ion-spinner color="primary"></ion-spinner>
       </div>
     </ion-content>
-    <ion-content :fullscreen="true" v-else>
-      <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
-      </ion-refresher>
-
-      <drink-card :cockTail="state.randomCocktail"></drink-card>
+    <ion-content v-else :fullscreen="true">
+      <drink-card :cockTail="state.drink"></drink-card>
     </ion-content>
   </ion-page>
 </template>
@@ -25,60 +25,50 @@ import {
   IonPage,
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonButtons,
-  IonMenuButton,
-  IonButton,
-  IonIcon,
+  IonBackButton,
+  IonTitle,
   IonContent,
   IonSpinner,
-  IonRefresher,
-  IonRefresherContent,
 } from "@ionic/vue";
 import { reactive } from "vue";
-
+import { useRoute } from "vue-router";
 import axios from "axios";
 import DrinkCard from "@/components/DrinkCard.vue";
 
 export default {
-  name: "Tab1",
+  name: "drink",
   components: {
     IonPage,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonButtons,
-    IonMenuButton,
-    IonButton,
-    IonIcon,
+    IonBackButton,
+    IonTitle,
     IonContent,
     IonSpinner,
-    IonRefresher,
-    IonRefresherContent,
 
-    /* My components */
+    /* My Components */
     DrinkCard,
   },
-
   setup() {
+    const route = useRoute();
+    const drinkId = route.params.drinkId;
+
     const state = reactive({
-      randomCocktail: {},
+      drink: {},
       loading: false,
     });
 
-    const fetchRandomCocktail = async (dispLoaderPage) => {
-      if (dispLoaderPage) {
-        state.loading = true;
-      }
-
+    const fetchDrinkById = async (drinkId) => {
+      state.loading = true;
       const res = await axios.get(
-        "https://www.thecocktaildb.com/api/json/v1/1/random.php"
+        `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkId}`
       );
 
       if (res.data) {
         let data = res.data.drinks[0];
         let measureIngredients = [];
-
         for (let number = 1; number <= 15; number++) {
           measureIngredients.push({
             ingredient: data[`strIngredient${number}`],
@@ -87,23 +77,16 @@ export default {
         }
 
         data["measureIngredients"] = measureIngredients;
-        state.randomCocktail = data;
+        state.drink = data;
       }
-
       state.loading = false;
     };
 
-    const doRefresh = (ev) => {
-      fetchRandomCocktail(false);
-      ev.target.complete();
-    };
-
-    fetchRandomCocktail(true);
+    fetchDrinkById(drinkId);
 
     return {
+      /* Data */
       state,
-      fetchRandomCocktail,
-      doRefresh,
     };
   },
 };
