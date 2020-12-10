@@ -15,7 +15,12 @@
       </div>
     </ion-content>
     <ion-content v-else :fullscreen="true">
-      <drink-card :cockTail="state.drink"></drink-card>
+      <transition
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+      >
+        <drink-card v-show="!state.showAnimation" :cockTail="state.drink"></drink-card>
+      </transition>
     </ion-content>
   </ion-page>
 </template>
@@ -58,6 +63,7 @@ export default {
     const state = reactive({
       drink: {},
       loading: false,
+      showAnimation: true,
     });
 
     const fetchDrinkById = async (drinkId) => {
@@ -79,7 +85,12 @@ export default {
         data["measureIngredients"] = measureIngredients;
         state.drink = data;
       }
+
       state.loading = false;
+      /* For Animation delay */
+      setTimeout(() => {
+        state.showAnimation = false;
+      }, 200);
     };
 
     fetchDrinkById(drinkId);
@@ -100,7 +111,14 @@ export default {
   height: 80vh;
 }
 
-ion-spiner {
+ion-spinner {
   transform: scale(1.5);
+}
+/* Search toolbar animation */
+.animate__animated.animate__fadeIn {
+  --animate-duration: 0.5s;
+}
+.animate__animated.animate__fadeOut {
+  --animate-duration: 0.5s;
 }
 </style>

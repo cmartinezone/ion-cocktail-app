@@ -14,8 +14,15 @@
       <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
-
-      <drink-card :cockTail="state.randomCocktail"></drink-card>
+      <transition
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+      >
+        <drink-card
+          v-show="!state.showAnimation"
+          :cockTail="state.randomCocktail"
+        ></drink-card>
+      </transition>
     </ion-content>
   </ion-page>
 </template>
@@ -64,12 +71,15 @@ export default {
     const state = reactive({
       randomCocktail: {},
       loading: false,
+      showAnimation: true,
     });
 
     const fetchRandomCocktail = async (dispLoaderPage) => {
       if (dispLoaderPage) {
         state.loading = true;
       }
+
+      state.showAnimation = true;
 
       const res = await axios.get(
         "https://www.thecocktaildb.com/api/json/v1/1/random.php"
@@ -91,11 +101,15 @@ export default {
       }
 
       state.loading = false;
+      /* For Animation delay */
+      setTimeout(() => {
+        state.showAnimation = false;
+      }, 200);
     };
 
-    const doRefresh = (ev) => {
+    const doRefresh = (event) => {
       fetchRandomCocktail(false);
-      ev.target.complete();
+      event.detail.complete();
     };
 
     fetchRandomCocktail(true);
@@ -117,7 +131,15 @@ export default {
   height: 80vh;
 }
 
-ion-spiner {
+ion-spinner {
   transform: scale(1.5);
 }
+
+/* Search toolbar animation */
+/* .animate__animated.animate__fadeIn {
+  --animate-duration: 0.5s;
+}
+.animate__animated.animate__fadeOut {
+  --animate-duration: 0.5s;
+} */
 </style>

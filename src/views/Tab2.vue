@@ -12,8 +12,12 @@
       </div>
     </ion-content>
     <ion-content v-else :fullscreen="true">
-      <ion-list>
+      <transition-group
+        tag="ion-list"
+        enter-active-class="animate__animated animate__fadeIn"
+      >
         <ion-item
+          v-show="!state.showAnimation"
           :button="true"
           v-for="(ingredient, index) in state.lstIngredients"
           :key="index"
@@ -33,7 +37,7 @@
             </h2>
           </ion-label>
         </ion-item>
-      </ion-list>
+      </transition-group>
     </ion-content>
   </ion-page>
 </template>
@@ -72,6 +76,7 @@ export default {
     const state = reactive({
       lstIngredients: [],
       loading: false,
+      showAnimation: true,
     });
 
     const fetchIngredients = async () => {
@@ -91,6 +96,9 @@ export default {
       }
 
       state.loading = false;
+      setTimeout(() => {
+        state.showAnimation = false;
+      }, 200);
     };
 
     const ingredientImage = (ingredient) => {
@@ -119,7 +127,7 @@ export default {
   height: 80vh;
 }
 
-ion-spiner {
+ion-spinner {
   transform: scale(1.5);
 }
 </style>
