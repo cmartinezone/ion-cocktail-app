@@ -5,7 +5,7 @@
         <ion-title color="primary">Random Drink</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content v-if="state.loading">
+    <ion-content v-if="loading">
       <div class="loading-center">
         <ion-spinner color="primary"></ion-spinner>
       </div>
@@ -18,10 +18,7 @@
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
       >
-        <drink-card
-          v-show="!state.showAnimation"
-          :cockTail="state.randomCocktail"
-        ></drink-card>
+        <drink-card v-show="!showAnimation" :cockTail="randomCocktail"></drink-card>
       </transition>
     </ion-content>
   </ion-page>
@@ -42,7 +39,7 @@ import {
   IonRefresher,
   IonRefresherContent,
 } from "@ionic/vue";
-import { reactive } from "vue";
+import { reactive, toRefs } from "vue";
 
 import axios from "axios";
 import DrinkCard from "@/components/DrinkCard.vue";
@@ -78,7 +75,6 @@ export default {
       if (dispLoaderPage) {
         state.loading = true;
       }
-
       state.showAnimation = true;
 
       const res = await axios.get(
@@ -87,16 +83,14 @@ export default {
 
       if (res.data) {
         let data = res.data.drinks[0];
-        let measureIngredients = [];
+        data["measureIngredients"] = [];
 
         for (let number = 1; number <= 15; number++) {
-          measureIngredients.push({
+          data.measureIngredients.push({
             ingredient: data[`strIngredient${number}`],
             measure: data[`strMeasure${number}`],
           });
         }
-
-        data["measureIngredients"] = measureIngredients;
         state.randomCocktail = data;
       }
 
@@ -115,7 +109,9 @@ export default {
     fetchRandomCocktail(true);
 
     return {
-      state,
+      /* Data */
+      ...toRefs(state),
+      /* Functions */
       fetchRandomCocktail,
       doRefresh,
     };
@@ -128,7 +124,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  height: 90vh;
 }
 
 ion-spinner {

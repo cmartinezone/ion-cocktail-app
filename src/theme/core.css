@@ -1,0 +1,15 @@
+ion-tab-bar {
+  position: absolute;
+  bottom: 0px;
+  width: 90%;
+  align-self: center;
+  border-radius: 20px;
+  --color: var(--ion-color-step-400);
+  --background: var(--ion-color-primary);
+  --border: 0;
+  margin-bottom: 10px;
+}
+
+ion-tab-bar ion-tab-button {
+  --color-selected: var(--ion-color-step-50);
+}

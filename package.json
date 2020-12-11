@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@capacitor/core": "2.4.4",
-    "@ionic/vue": "^5.4.0",
-    "@ionic/vue-router": "^5.4.0",
+    "@ionic/vue": "^5.5.2",
+    "@ionic/vue-router": "^5.5.2",
     "@mdi/js": "^5.8.55",
     "animate.css": "^4.1.1",
     "axios": "^0.21.0",

@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content v-if="state.loading">
+    <ion-content v-if="loading">
       <div class="loading-center">
         <ion-spinner color="primary"></ion-spinner>
       </div>
@@ -20,9 +20,9 @@
         enter-active-class="animate__animated animate__fadeIn"
       >
         <ion-item
-          v-show="!state.showAnimation"
+          v-show="!showAnimation"
           :button="true"
-          v-for="drink in state.lstDrinks"
+          v-for="drink in lstDrinks"
           :key="drink.idDrink"
           @click="
             $router.push({
@@ -52,7 +52,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  useIonRouter,
   IonSpinner,
   IonList,
   IonItem,
@@ -60,9 +59,11 @@ import {
   IonAvatar,
   IonButtons,
   IonBackButton,
+  IonSegment,
+  IonSegmentButton,
 } from "@ionic/vue";
-import { reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { reactive, toRefs } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
 
 export default {
@@ -73,7 +74,6 @@ export default {
     IonToolbar,
     IonTitle,
     IonContent,
-    useIonRouter,
     IonSpinner,
     IonList,
     IonItem,
@@ -81,10 +81,11 @@ export default {
     IonAvatar,
     IonButtons,
     IonBackButton,
+    IonSegment,
+    IonSegmentButton,
   },
-  setup(props) {
+  setup() {
     const route = useRoute();
-
     const ingredient = route.params.ingredient;
 
     const state = reactive({
@@ -102,7 +103,6 @@ export default {
 
       if (res.data) {
         const data = res.data.drinks;
-
         state.lstDrinks = data;
       }
 
@@ -116,7 +116,7 @@ export default {
 
     return {
       /* Data */
-      state,
+      ...toRefs(state),
       ingredient,
       /* functions */
       fetchDrinkByEngredient,
@@ -129,10 +129,17 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  height: 90vh;
 }
 
 ion-spinner {
   transform: scale(1.5);
+}
+
+.animate__animated.animate__fadeIn {
+  --animate-duration: 0.5s;
+}
+.animate__animated.animate__fadeOut {
+  --animate-duration: 0.5s;
 }
 </style>

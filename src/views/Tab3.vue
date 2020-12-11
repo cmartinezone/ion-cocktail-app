@@ -14,24 +14,33 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content v-if="state.loading">
+    <ion-content v-if="loading">
       <div class="center">
         <ion-spinner color="primary"></ion-spinner>
       </div>
     </ion-content>
     <ion-content v-else :fullscreen="true">
-      <div
-        class="center no-results"
-        v-if="state.searchResults && state.searchResults.length === 0"
-      >
+      <div class="center no-results" v-if="searchResults && searchResults.length === 0">
         <ion-label>No Results</ion-label>
       </div>
 
-      <drink-card
-        v-for="drink in state.searchResults"
-        :key="drink.idDrink"
-        :cockTail="drink"
-      ></drink-card>
+      <ion-grid>
+        <transition-group
+          tag="ion-row"
+          enter-active-class="animate__animated animate__fadeIn"
+        >
+          <ion-col
+            v-show="!showAnimation"
+            size="12"
+            size-sm="6"
+            size-lg="4"
+            v-for="drink in searchResults"
+            :key="drink.idDrink"
+          >
+            <drink-card :cockTail="drink"></drink-card>
+          </ion-col>
+        </transition-group>
+      </ion-grid>
     </ion-content>
   </ion-page>
 </template>
@@ -46,8 +55,11 @@ import {
   IonContent,
   IonSpinner,
   IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from "@ionic/vue";
-import { reactive } from "vue";
+import { reactive, toRefs } from "vue";
 import axios from "axios";
 import DrinkCard from "@/components/DrinkCard.vue";
 
@@ -62,38 +74,40 @@ export default {
     IonPage,
     IonSpinner,
     IonLabel,
+    IonGrid,
+    IonRow,
+    IonCol,
+    /* My Components */
     DrinkCard,
   },
   setup() {
     const state = reactive({
       searchResults: [],
       loading: false,
+      showAnimation: true,
     });
 
     const fetchSearchResults = async (searchTerm) => {
       state.loading = true;
 
-      console.log(searchTerm);
-
       if (searchTerm) {
-        state.searchResults = [];
         const res = await axios.get(
           `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchTerm}`
         );
 
+        state.showAnimation = true;
         if (res.data) {
           let data = res.data.drinks;
 
           if (data && data.length !== 0) {
             /* Wrap properties */
             data.map((obj) => {
-              let measureIngredients = [];
+              obj["measureIngredients"] = [];
               for (let number = 1; number <= 15; number++) {
-                measureIngredients.push({
+                obj.measureIngredients.push({
                   ingredient: obj[`strIngredient${number}`],
                   measure: obj[`strMeasure${number}`],
                 });
-                obj["measureIngredients"] = measureIngredients;
               }
             });
 
@@ -103,11 +117,14 @@ export default {
       }
 
       state.loading = false;
+      setTimeout(() => {
+        state.showAnimation = false;
+      }, 200);
     };
 
     return {
       /* Data */
-      state,
+      ...toRefs(state),
       /* Functions */
       fetchSearchResults,
     };

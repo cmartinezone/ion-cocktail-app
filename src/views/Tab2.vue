@@ -6,7 +6,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content v-if="state.loading">
+    <ion-content v-if="loading">
       <div class="loading-center">
         <ion-spinner color="primary"></ion-spinner>
       </div>
@@ -17,9 +17,9 @@
         enter-active-class="animate__animated animate__fadeIn"
       >
         <ion-item
-          v-show="!state.showAnimation"
+          v-show="!showAnimation"
           :button="true"
-          v-for="(ingredient, index) in state.lstIngredients"
+          v-for="(ingredient, index) in lstIngredients"
           :key="index"
           @click="
             $router.push({
@@ -55,7 +55,7 @@ import {
   IonLabel,
   IonAvatar,
 } from "@ionic/vue";
-import { reactive } from "vue";
+import { reactive, toRefs } from "vue";
 import axios from "axios";
 
 export default {
@@ -72,7 +72,7 @@ export default {
     IonLabel,
     IonAvatar,
   },
-  setup(props) {
+  setup() {
     const state = reactive({
       lstIngredients: [],
       loading: false,
@@ -111,7 +111,7 @@ export default {
 
     return {
       /* Data */
-      state,
+      ...toRefs(state),
       /* functions */
       fetchIngredients,
       ingredientImage,
@@ -124,10 +124,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  height: 90vh;
 }
 
 ion-spinner {
   transform: scale(1.5);
+}
+.animate__animated.animate__fadeIn {
+  --animate-duration: 0.5s;
+}
+.animate__animated.animate__fadeOut {
+  --animate-duration: 0.5s;
 }
 </style>

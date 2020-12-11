@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-tabs>
-      <ion-tab-bar slot="bottom">
+      <ion-tab-bar slot="bottom" :translucent="true">
         <ion-tab-button tab="random" href="/tabs/tab1">
           <ion-icon :icon="iconWrapper(mdiShuffleVariant)" />
           <ion-label>Random</ion-label>
